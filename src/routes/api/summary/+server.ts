@@ -24,6 +24,8 @@ type OllamaResponse = {
     done: boolean;
 };
 
+
+
 const generateSummary = async (input: string): Promise<string> => {
     try {
         const body: OllamaRequest = {
@@ -162,7 +164,55 @@ export const POST: RequestHandler = async ({ request }) => {
             return new Response('No text provided', { status: 400 });
         }
 
-        const summary = await generateSummary(text);
+        // Fetch data from the database
+        const studentList = await db.select().from(students);
+        const subjectList = await db.select().from(subjects);
+        const gradeList = await db.select().from(grades);
+        const enrollmentList = await db.select().from(enrollmentHistory);
+
+        // Calculate enrollment statistics
+        const totalEnrollments = enrollmentList.length;
+        const statusCounts = enrollmentList.reduce((acc, curr) => {
+            const status = curr.status ?? 'unknown';
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const semesterCounts = enrollmentList.reduce((acc, curr) => {
+            const key = `${curr.semester ?? 'Unknown'} ${curr.year ?? 'N/A'}`;
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // Format database information
+        const enrollmentStats = [
+            `Total Enrollments: ${totalEnrollments}`,
+            '\nStatus Distribution:',
+            ...Object.entries(statusCounts).map(([status, count]) => 
+                `- ${status}: ${count} (${((count/totalEnrollments) * 100).toFixed(1)}%)`
+            ),
+            '\nSemester Distribution:',
+            ...Object.entries(semesterCounts).map(([semester, count]) => 
+                `- ${semester}: ${count} enrollments`
+            )
+        ].join('\n');
+
+        // Combine user's text with database context
+        const contextualizedInput = [
+            '=== User Query Context ===\n',
+            text,
+            '\n=== Database Context ===\n',
+            '--- Enrollment Statistics ---',
+            enrollmentStats,
+            '\n--- Student Count ---',
+            `Total Students: ${studentList.length}`,
+            '\n--- Subject Count ---',
+            `Total Subjects: ${subjectList.length}`,
+            '\n--- Grade Records ---',
+            `Total Grade Records: ${gradeList.length}`
+        ].join('\n');
+
+        const summary = await generateSummary(contextualizedInput);
         return json({ summary });
     } catch (error) {
         console.error('Error processing summary:', error);
