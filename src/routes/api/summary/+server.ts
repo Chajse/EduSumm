@@ -2,13 +2,6 @@ import { db } from '$lib/server/db';
 import { students, subjects, grades, enrollmentHistory } from '$lib/server/db/schema';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { Configuration, OpenAIApi } from 'openai';
-
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY
-});
-
-const openai = new OpenAIApi(configuration);
 
 const OLLAMA_MODEL = 'llama3.2:latest'; // Updated to match your installed model
 const SYSTEM_PROMPT = `You are a highly capable AI assistant specialized in summarizing information. 
@@ -30,6 +23,8 @@ type OllamaResponse = {
     response: string;
     done: boolean;
 };
+
+
 
 const generateSummary = async (input: string): Promise<string> => {
     try {
@@ -85,45 +80,142 @@ const generateSummary = async (input: string): Promise<string> => {
 
 export const GET: RequestHandler = async () => {
     try {
-        // Here you would typically query your database and get relevant data
-        // For now, we'll return a mock summary
-        const dbSummary = "Database summary functionality will be implemented soon. This will include statistics about students, grades, and courses.";
-        return json({ summary: dbSummary });
+        // Fetch data from the database
+        const studentList = await db.select().from(students);
+        const subjectList = await db.select().from(subjects);
+        const gradeList = await db.select().from(grades);
+        const enrollmentList = await db.select().from(enrollmentHistory);
+
+        // Calculate enrollment statistics
+        const totalEnrollments = enrollmentList.length;
+        const statusCounts = enrollmentList.reduce((acc, curr) => {
+            const status = curr.status ?? 'unknown';
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const semesterCounts = enrollmentList.reduce((acc, curr) => {
+            const key = `${curr.semester ?? 'Unknown'} ${curr.year ?? 'N/A'}`;
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // Convert data into string format with statistics
+        const studentString = studentList.length > 0 
+            ? studentList.map((s, i) => `${i + 1}. Name: ${s.firstName} ${s.lastName}, ID: ${s.id}, Course: ${s.course}, Year: ${s.year}, Block: ${s.block}`).join('\n')
+            : 'No students found';
+
+        const subjectString = subjectList.length > 0
+            ? subjectList.map((s, i) => `${i + 1}. ${s.subjectName} (${s.subjectCode}), Instructor: ${s.instructorName || 'N/A'}, Credits: ${s.credits ?? 'N/A'}`).join('\n')
+            : 'No subjects found';
+
+        const gradeString = gradeList.length > 0
+            ? gradeList.map((g, i) => `${i + 1}. Student ID: ${g.studentId}, Subject ID: ${g.subjectId}, Midterm: ${g.midtermGrade ?? 'N/A'}, Final: ${g.finalGrade ?? 'N/A'}, Year: ${g.year}, Semester: ${g.semester}`).join('\n')
+            : 'No grades found';
+
+        const enrollmentStats = [
+            `Total Enrollments: ${totalEnrollments}`,
+            '\nStatus Distribution:',
+            ...Object.entries(statusCounts).map(([status, count]) => 
+                `- ${status}: ${count} (${((count/totalEnrollments) * 100).toFixed(1)}%)`
+            ),
+            '\nSemester Distribution:',
+            ...Object.entries(semesterCounts).map(([semester, count]) => 
+                `- ${semester}: ${count} enrollments`
+            )
+        ].join('\n');
+
+        const enrollmentString = enrollmentList.length > 0
+            ? [
+                enrollmentStats,
+                '\nDetailed Enrollment Records:',
+                ...enrollmentList.map((e, i) => 
+                    `${i + 1}. Student ID: ${e.studentId}, Subject ID: ${e.subjectId}, ${e.semester} ${e.year}, Status: ${e.status}`
+                )
+              ].join('\n')
+            : 'No enrollments found';
+
+        // Combine all data into a single input for summary generation
+        const combinedInput = [
+            '=== Database Summary ===\n',
+            '--- Enrollment Statistics and History ---',
+            enrollmentString,
+            '\n--- Students ---',
+            studentString,
+            '\n--- Subjects ---',
+            subjectString,
+            '\n--- Grades ---',
+            gradeString,
+        ].join('\n');
+
+        // Generate summary using Ollama
+        const summary = await generateSummary(combinedInput);
+        return json({ summary });
     } catch (error) {
-        console.error('Database summary error:', error);
-        return json({ error: 'Error generating database summary' }, { status: 500 });
+        console.error('Error fetching database summary:', error);
+        return new Response('Error fetching database summary', { status: 500 });
     }
 };
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
         const { text } = await request.json();
-
         if (!text) {
-            return json({ error: 'No text provided' }, { status: 400 });
+            return new Response('No text provided', { status: 400 });
         }
 
-        const completion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are a helpful assistant that provides concise summaries."
-                },
-                {
-                    role: "user",
-                    content: `Please summarize the following text:\n\n${text}`
-                }
-            ],
-            max_tokens: 500,
-            temperature: 0.7,
-        });
+        // Fetch data from the database
+        const studentList = await db.select().from(students);
+        const subjectList = await db.select().from(subjects);
+        const gradeList = await db.select().from(grades);
+        const enrollmentList = await db.select().from(enrollmentHistory);
 
-        const summary = completion.data.choices[0]?.message?.content || 'Unable to generate summary';
+        // Calculate enrollment statistics
+        const totalEnrollments = enrollmentList.length;
+        const statusCounts = enrollmentList.reduce((acc, curr) => {
+            const status = curr.status ?? 'unknown';
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const semesterCounts = enrollmentList.reduce((acc, curr) => {
+            const key = `${curr.semester ?? 'Unknown'} ${curr.year ?? 'N/A'}`;
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // Format database information
+        const enrollmentStats = [
+            `Total Enrollments: ${totalEnrollments}`,
+            '\nStatus Distribution:',
+            ...Object.entries(statusCounts).map(([status, count]) => 
+                `- ${status}: ${count} (${((count/totalEnrollments) * 100).toFixed(1)}%)`
+            ),
+            '\nSemester Distribution:',
+            ...Object.entries(semesterCounts).map(([semester, count]) => 
+                `- ${semester}: ${count} enrollments`
+            )
+        ].join('\n');
+
+        // Combine user's text with database context
+        const contextualizedInput = [
+            '=== User Query Context ===\n',
+            text,
+            '\n=== Database Context ===\n',
+            '--- Enrollment Statistics ---',
+            enrollmentStats,
+            '\n--- Student Count ---',
+            `Total Students: ${studentList.length}`,
+            '\n--- Subject Count ---',
+            `Total Subjects: ${subjectList.length}`,
+            '\n--- Grade Records ---',
+            `Total Grade Records: ${gradeList.length}`
+        ].join('\n');
+
+        const summary = await generateSummary(contextualizedInput);
         return json({ summary });
-
     } catch (error) {
-        console.error('Summary generation error:', error);
-        return json({ error: 'Error generating summary' }, { status: 500 });
+        console.error('Error processing summary:', error);
+        return new Response('Error processing request', { status: 500 });
     }
 };
