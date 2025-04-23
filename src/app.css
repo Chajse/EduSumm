@@ -1,1 +1,582 @@
-@import 'tailwindcss';
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: poppins, sans-serif;
+    transition: all 0.3s ease;
+}
+
+:root {
+    --color-primary: #6155bb;
+    --color-secondary: #1d415e;
+    --color-dark: #010101;
+    --color-background: #f5f5f5;
+    --color-text: #ffffff;
+    --color-dark-text: #000000;
+    --color-card-bg: #ffffff;
+    --color-input-bg: #ffffff;
+    --color-input-text: #000000;
+    --color-input-border: #ccc;
+    --color-navbar: #6155bb;
+    --color-shadow: rgba(0, 0, 0, 0.1);
+    --color-card-border: transparent;
+    --color-card-hover: rgba(0, 0, 0, 0.02);
+}
+
+:root[data-theme="dark"] {
+    --color-primary: #4a3f9d;
+    --color-secondary: #0d2a3f;
+    --color-dark: #1a1a1a;
+    --color-background: #121212;
+    --color-text: #ffffff;
+    --color-dark-text: #e0e0e0;
+    --color-card-bg: #1e1e1e;
+    --color-input-bg: #2d2d2d;
+    --color-input-text: #e0e0e0;
+    --color-input-border: #404040;
+    --color-navbar: #2d2d2d;
+    --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-card-border: #2d2d2d;
+    --color-card-hover: rgba(255, 255, 255, 0.05);
+}
+
+body {
+    background-color: var(--color-background);
+    color: var(--color-dark-text);
+    min-height: 100vh;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: auto;
+    padding: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    background-color: var(--color-navbar);
+    color: var(--color-text);
+    box-shadow: 0 2px 4px var(--color-shadow);
+}
+
+.navbar-brand {
+    margin-right: auto;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-text);
+    text-transform: uppercase;
+    gap: 1.5rem;
+}
+
+.navbar-nav {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.nav-item {
+    justify-content: center;
+    text-align: center;
+    margin-left: auto;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    transition: font-weight 0.3s, transform 0.3s, color 0.3s;
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.nav-item:hover {
+    font-weight: bold;
+    transform: scale(1.1);
+    text-decoration: none;
+}
+
+.nav-item.active {
+    font-weight: bold;
+    color: var(--color-text);
+    transform: scale(1.1);
+}
+
+.label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--color-background);
+}
+
+.students-content,
+.dashboard-content,
+.grades-content,
+.subjects-content,
+.enrollment-content,
+.content-container {
+    margin-top: 8rem;
+    padding: 2rem;
+    background-color: var(--color-card-bg);
+    color: var(--color-dark-text);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px var(--color-shadow);
+    border: 1px solid var(--color-card-border);
+    transition: all 0.3s ease;
+}
+
+.record-grades-title {
+    margin-bottom: 2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-primary);
+    color: var(--color-dark-text);
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.grades-content form > div {
+    margin-bottom: 1.5rem; /* Add vertical spacing between form fields */
+}
+
+.grade-container {
+    width: 95%;
+    max-width: 100%;
+    padding: 0 1rem; 
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.title-label {
+    display: block;
+    color: var(--color-dark-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    border-radius: 0.5rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: var(--color-input-bg);
+    color: var(--color-input-text);
+}
+
+.input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 5px var(--color-primary);
+    outline: none;
+}
+
+/* Select Input Styles */
+select.input {
+    padding-right: 2.5rem;
+    background-position: right 0.75rem center;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1em;
+}
+
+button,
+.submit-button,
+.submit-grade-btn {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover,
+.submit-button:hover,
+.submit-grade-btn:hover {
+    background-color: var(--color-secondary);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .subjects-content {
+        padding: 1rem;
+    }
+
+    .students-content {
+        padding: 1rem;
+    }
+
+    .grades-content {
+        padding: 1rem;
+    }
+
+    .enrollment-content {
+        padding: 1rem;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+.theme-switch-input {
+    display: none; 
+}
+
+.theme-switch-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.display {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.display > label {
+    width: 100px;
+    height: 50px;
+    border-radius: 999px;
+    background: #F3F3F3;
+    box-shadow: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 99px;
+    background: white;
+    box-shadow: none;
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(10%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+svg {
+    width: 30px;
+    position: absolute;
+}
+
+.sun {
+    color: #FFD600;
+    margin-top: 0%;
+    opacity: 1;
+}
+
+.moon {
+    margin-top: -150%;
+    color: white;
+    opacity: 0;
+}
+
+input[type=checkbox]:checked + .display {
+    background: transparent;
+}
+
+input[type=checkbox]:checked + .display label {
+    background: #1F1F21;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5) inset;
+}
+
+input[type=checkbox]:checked + .display label .circle {
+    left: 100%;
+    transform: translate(-110%, -50%);
+    background: #2a2a2a;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5),
+        -10px -10px 30px rgba(0, 0, 0, 0.5) inset;
+}
+
+input[type=checkbox]:checked + .display label .circle .sun {
+    margin-top: 150%;
+    opacity: 0;
+}
+
+input[type=checkbox]:checked + .display label .circle .moon {
+    margin-top: 0%;
+    opacity: 1;
+}
+
+label:active .circle {
+    width: 200px;
+}
+
+/* Message Pop-up Styles */
+.error-message-popup,
+.success-message-popup {
+    padding: 1rem; /* Adjust padding as needed */
+    margin-bottom: 1rem; /* Space below the message */
+    border-radius: 0.5rem; /* Rounded corners */
+    text-align: center; /* Center the text */
+}
+
+.error-message-popup {
+    background-color: #f8d7da; /* Light red background */
+    color: #721c24; /* Dark red text */
+    border: 1px solid #f5c6cb; /* Red border */
+}
+
+.success-message-popup {
+    background-color: #d4edda; /* Light green background */
+    color: #155724; /* Dark green text */
+    border: 1px solid #c3e6cb; /* Green border */
+}
+
+/* Form Error States */
+.form-error:placeholder-shown {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.title-label.error:has(+ input:placeholder-shown),
+.title-label.error:has(+ select:invalid) {
+    color: #dc3545;
+}
+
+.title-label.error:has(+ input:placeholder-shown)::after,
+.title-label.error:has(+ select:invalid)::after {
+    content: '*';
+    color: #dc3545;
+    margin-left: 4px;
+}
+
+/* Success Popup */
+.success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #28a745;
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadeInOut 3s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Submit Grade Button Styles */
+.submit-grade-btn {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-grade-btn:hover {
+    background-color: var(--color-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.submit-grade-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding-top: 1rem;
+    margin-bottom: 0;
+}
+
+/* Common Form Page Styles */
+.page-title {
+    margin-bottom: 2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-primary);
+    color: var(--color-dark-text);
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.page-container {
+    width: 95%;
+    max-width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.content-container {
+    margin-top: 8rem;
+    margin-bottom: 4rem;
+    padding: 2rem 2rem 1rem 2rem;
+    background-color: var(--color-background);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.content-container form > div {
+    margin-bottom: 1rem; /* Reduced space between form fields */
+}
+
+.form-submit-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding-top: 0.5rem; /* Reduced top padding */
+    margin-bottom: 0;
+}
+
+.submit-button {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:hover {
+    background-color: var(--color-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode specific overrides for components */
+:root[data-theme="dark"] .bg-white {
+    background-color: var(--color-card-bg) !important;
+}
+
+:root[data-theme="dark"] .text-gray-500 {
+    color: #a0aec0 !important;
+}
+
+:root[data-theme="dark"] .border-primary {
+    border-color: var(--color-primary) !important;
+}
+
+.dashboard-card {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    background-color: var(--color-card-hover);
+    transform: translateY(-2px);
+}
+
+.dashboard-stat {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.dashboard-label {
+    font-size: 0.875rem;
+    color: var(--color-dark-text);
+    opacity: 0.8;
+}
+
+.chart-container {
+    width: 100%;
+    height: 300px;
+    margin: 2rem 0;
+    padding: 1rem;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: 1rem;
+}
+
+/* Responsive Grid Layout */
+.dashboard-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .content-container,
+    .students-content,
+    .dashboard-content,
+    .grades-content,
+    .subjects-content,
+    .enrollment-content {
+        margin-top: 6rem;
+        padding: 1rem;
+    }
+
+    .dashboard-card {
+        padding: 1rem;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-stat {
+        font-size: 1.5rem;
+    }
+}
+
+/* Activity Feed Styles */
+.activity-feed {
+    margin-top: 2rem;
+}
+
+.activity-item {
+    padding: 1rem;
+    border-left: 4px solid var(--color-primary);
+    margin-bottom: 1rem;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.5rem;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--color-dark-text);
+    opacity: 0.7;
+}
+
+
