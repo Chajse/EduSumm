@@ -8,7 +8,7 @@ function getInitialTheme(): Theme {
     const stored = localStorage.getItem('theme') as Theme;
     if (stored) return stored;
     
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return 'light'; // Always default to light mode
 }
 
 export const theme = writable<Theme>(getInitialTheme());
@@ -17,10 +17,6 @@ export const theme = writable<Theme>(getInitialTheme());
 theme.subscribe((value) => {
     if (typeof window !== 'undefined') {
         localStorage.setItem('theme', value);
-        if (value === 'dark') {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        document.documentElement.setAttribute('data-theme', value);
     }
 }); 

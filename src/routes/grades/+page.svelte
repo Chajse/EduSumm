@@ -12,6 +12,7 @@
 
     let successMessage = '';
     let errorMessage = '';
+    let showError = false;
 
     function submitGrade() {
         if (
@@ -23,8 +24,9 @@
             grade.year
         ) {
             console.log('Submitted Grade:', grade);
-            successMessage = 'Grade recorded successfully!';
+            successMessage = 'Grade submitted successfully!';
             errorMessage = '';
+            showError = false;
             // Reset the form
             grade = {
                 studentId: '',
@@ -37,6 +39,7 @@
         } else {
             successMessage = '';
             errorMessage = 'Please fill out all fields before submitting.';
+            showError = true;
         }
     }
 </script>
@@ -45,95 +48,87 @@
 <Navbar />
 
 <!-- Grade Form Content -->
-<div class="grades-content max-w-4xl mx-auto mt-16 p-8 bg-white dark:bg-gray-900 shadow-xl rounded-xl">
-    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 border-b pb-2">
-        Record Student Grade
-    </h2>
-
-    <!-- Success and Error Messages -->
-    {#if successMessage}
-        <div class="p-4 mb-4 text-green-800 bg-green-100 rounded-lg">
-            {successMessage}
-        </div>
-    {/if}
-    {#if errorMessage}
-        <div class="p-4 mb-4 text-red-800 bg-red-100 rounded-lg">
-            {errorMessage}
-        </div>
-    {/if}
-
-    <form on:submit|preventDefault={submitGrade} class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            <label class="title-label">Student ID</label>
-            <input
-                type="text"
-                bind:value={grade.studentId}
-                class="input"
-                placeholder="2024001"
-            />
-        </div>
-
-        <div>
-            <label class="title-label">Subject ID</label>
-            <input
-                type="text"
-                bind:value={grade.subjectId}
-                class="input"
-                placeholder="CS101"
-            />
-        </div>
-
-        <div>
-            <label class="label">Midterm Grade</label>
-            <input
-                type="number"
-                step="0.01"
-                bind:value={grade.midtermGrade}
-                class="input"
-                placeholder="e.g. 89.5"
-            />
-        </div>
-
-        <div>
-            <label for="final-grade" class="title-label">Final Grade</label>
-            <input
-                id="final-grade"
-                type="number"
-                step="0.01"
-                bind:value={grade.finalGrade}
-                class="input"
-                placeholder="e.g. 91.0"
-            />
-        </div>
-
-        <div>
-            <label for="semester" class="title-label">Semester</label>
-            <select id="semester" bind:value={grade.semester} class="input">
-                <option value="">Select</option>
-                <option value="1st">1st Semester</option>
-                <option value="2nd">2nd Semester</option>
-                <option value="Summer">Summer</option>
-            </select>
-        </div>
-
-        <div>
-            <label for="school-year" class="title-label">School Year</label>
-            <input
-                id="school-year"
-                type="text"
-                bind:value={grade.year}
-                class="input"
-                placeholder="2024–2025"
-            />
-        </div>
-
-        <div class="md:col-span-2 text-right mt-4">
-            <button
-                type="submit"
-                class="px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-all font-semibold"
-            >
-                Save Grade
-            </button>
-        </div>
-    </form>
+<div class="grade-container px-4">
+    <div class="grades-content relative max-w-4xl mx-auto mt-16 px-8 pt-12 pb-8 bg-white dark:bg-gray-900 shadow-xl rounded-xl">
+        <h2 class="record-grades-title">
+            Record Grades
+        </h2>
+        
+        {#if successMessage}
+            <div class="success-popup">
+                {successMessage}
+            </div>
+        {/if}
+        
+        <form on:submit|preventDefault={submitGrade} class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="title-label {showError ? 'error' : ''}">Student ID</label>
+                <input
+                    type="text"
+                    bind:value={grade.studentId}
+                    class="input {showError ? 'form-error' : ''}"
+                    placeholder="2024001"
+                />
+            </div>
+            <div>
+                <label class="title-label {showError ? 'error' : ''}">Subject ID</label>
+                <input
+                    type="text"
+                    bind:value={grade.subjectId}
+                    class="input {showError ? 'form-error' : ''}"
+                    placeholder="SUB001"
+                />
+            </div>
+            <div>
+                <label class="title-label {showError ? 'error' : ''}">Midterm Grade</label>
+                <input
+                    type="number"
+                    bind:value={grade.midtermGrade}
+                    class="input {showError ? 'form-error' : ''}"
+                    placeholder="0-100"
+                    min="0"
+                    max="100"
+                />
+            </div>
+            <div>
+                <label class="title-label {showError ? 'error' : ''}">Final Grade</label>
+                <input
+                    type="number"
+                    bind:value={grade.finalGrade}
+                    class="input {showError ? 'form-error' : ''}"
+                    placeholder="0-100"
+                    min="0"
+                    max="100"
+                />
+            </div>
+            <div>
+                <label class="title-label {showError ? 'error' : ''}">Semester</label>
+                <select bind:value={grade.semester} class="input {showError ? 'form-error' : ''}">
+                    <option value="">Select Semester</option>
+                    <option value="1">First Semester</option>
+                    <option value="2">Second Semester</option>
+                    <option value="3">Summer</option>
+                </select>
+            </div>
+            <div>
+                <label class="title-label {showError ? 'error' : ''}">Year</label>
+                <input
+                    type="number"
+                    bind:value={grade.year}
+                    class="input {showError ? 'form-error' : ''}"
+                    placeholder="2024"
+                    min="2000"
+                    max="2100"
+                />
+            </div>
+            <div class="md:col-span-2 submit-btn-container">
+                <button
+                    type="submit"
+                    class="submit-grade-btn"
+                >
+                    Submit Grade
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
