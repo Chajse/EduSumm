@@ -10,11 +10,11 @@
     }
 
     let isMobile = false;
-    let activePage = 'dashboard';
+    let activePage = 'students';
 
     $: {
         if ($page.url.pathname === '/') {
-            activePage = 'dashboard';
+            activePage = 'students';
         } else if ($page.url.pathname === '/grades') {
             activePage = 'grades';
         } else if ($page.url.pathname === '/students') {
@@ -47,14 +47,6 @@
     <!-- Centered Navigation Links -->
     <nav class="flex-1 flex justify-center">
         <div class="flex space-x-6">
-                <a 
-                    href="/dashboard" 
-                    class="nav-item nav-link flex items-center gap-2 text-sm"
-                    class:active={activePage === 'dashboard'}
-                >
-                    <i class="fas fa-home"></i>
-                    Dashboard
-                </a>
                 <a 
                     href="/students" 
                     class="nav-item nav-link flex items-center gap-2 text-sm"
