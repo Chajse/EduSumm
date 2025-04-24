@@ -77,7 +77,7 @@
                     class:active={activePage === 'enrollmentdate'}
                 >
                     <i class="fas fa-calendar-alt"></i>
-                    Enrollment Date
+                    Enrollment
                 </a>
                 <a 
                     href="/summary" 

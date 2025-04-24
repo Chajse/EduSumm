@@ -164,11 +164,10 @@
 
 <!-- Subject Form Content -->
 <div class="page-container">
+    <!-- Add Subject Form Container -->
     <div class="content-container">
-        <h2 class="page-title">
-            Add New Subject
-        </h2>
-        
+        <h2 class="page-title">Add New Subject</h2>
+
         <!-- Success Message Popup -->
         {#if successMessage}
             <div class="success-popup">
@@ -235,94 +234,108 @@
                 </button>
             </div>
         </form>
+    </div>
 
-        <!-- Subjects Table -->
-        <div class="mt-8">
-            <h3 class="text-xl font-semibold mb-4">Subjects List</h3>
+    <!-- Subjects List Container -->
+    <div class="content-container">
+        <div class="table-container">
+            <h3>Subjects List</h3>
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                <table>
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Instructor</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Units</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Instructor</th>
+                            <th>Units</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                    <tbody>
                         {#each subjects as subject}
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            <tr>
+                                <td>
                                     {#if editingSubject?.id === subject.id}
-                                        <input
-                                            type="text"
-                                            bind:value={editingSubject.subjectCode}
-                                            class="input-sm"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="text"
+                                                bind:value={editingSubject.subjectCode}
+                                                class="edit-form"
+                                                placeholder="Subject Code"
+                                            />
+                                        </div>
                                     {:else}
                                         {subject.subjectCode}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingSubject?.id === subject.id}
-                                        <input
-                                            type="text"
-                                            bind:value={editingSubject.subjectName}
-                                            class="input-sm"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="text"
+                                                bind:value={editingSubject.subjectName}
+                                                class="edit-form"
+                                                placeholder="Subject Name"
+                                            />
+                                        </div>
                                     {:else}
                                         {subject.subjectName}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingSubject?.id === subject.id}
-                                        <input
-                                            type="text"
-                                            bind:value={editingSubject.instructorName}
-                                            class="input-sm"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="text"
+                                                bind:value={editingSubject.instructorName}
+                                                class="edit-form"
+                                                placeholder="Instructor Name"
+                                            />
+                                        </div>
                                     {:else}
                                         {subject.instructorName}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingSubject?.id === subject.id}
-                                        <input
-                                            type="number"
-                                            bind:value={editingSubject.units}
-                                            class="input-sm"
-                                            min="1"
-                                            max="6"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="number"
+                                                bind:value={editingSubject.units}
+                                                class="edit-form"
+                                                min="1"
+                                                max="6"
+                                                placeholder="Units"
+                                            />
+                                        </div>
                                     {:else}
                                         {subject.credits}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td>
                                     {#if editingSubject?.id === subject.id}
                                         <button
                                             on:click={updateSubject}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            class="status-button status-active"
                                         >
                                             Save
                                         </button>
                                         <button
                                             on:click={() => editingSubject = null}
-                                            class="text-gray-600 hover:text-gray-900"
+                                            class="status-button status-inactive"
                                         >
                                             Cancel
                                         </button>
                                     {:else}
                                         <button
                                             on:click={() => startEdit(subject)}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            class="status-button status-pending"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             on:click={() => deleteSubject(subject.id)}
-                                            class="text-red-600 hover:text-red-900"
+                                            class="status-button status-inactive"
                                         >
                                             Delete
                                         </button>
@@ -351,5 +364,8 @@
         outline: none;
         border-color: rgb(99 102 241);
         box-shadow: 0 0 0 1px rgb(99 102 241);
+    }
+    .edit-field {
+        padding: 0.25rem;
     }
 </style>

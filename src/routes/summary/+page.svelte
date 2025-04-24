@@ -208,6 +208,7 @@
         background-color: var(--color-card-bg);
         border-radius: 0.5rem;
         border: 1px solid var(--color-card-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .empty-state {
@@ -226,6 +227,10 @@
         padding: 0.75rem;
         border-radius: 50%;
         box-shadow: 0 2px 4px var(--color-shadow);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--color-card-border);
     }
 
     .chat-icon {
@@ -273,12 +278,14 @@
     .message.user {
         background-color: var(--color-primary);
         color: var(--color-text);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .message.ai {
         background-color: var(--color-card-bg);
         border: 1px solid var(--color-card-border);
         color: var(--color-dark-text);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .message.error {
@@ -296,16 +303,14 @@
         justify-content: center;
         flex-shrink: 0;
         position: relative;
+        border: 2px solid var(--color-text);
     }
 
     .ai-icon {
         width: 1.25rem;
         height: 1.25rem;
         color: var(--color-text);
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        stroke-width: 2px;
     }
 
     .message-text {
@@ -332,6 +337,7 @@
         background-color: var(--color-card-bg);
         border-radius: 0.5rem;
         border: 1px solid var(--color-card-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .chat-form {

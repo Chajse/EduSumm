@@ -164,6 +164,7 @@
 
 <!-- Student Form Content -->
 <div class="page-container">
+    <!-- Add Student Form Container -->
     <div class="content-container">
         <h2 class="page-title">Add New Student</h2>
 
@@ -275,38 +276,40 @@
                 </button>
             </div>
         </form>
+    </div>
 
-        <!-- Students Table -->
-        <div class="mt-8">
-            <h3 class="text-xl font-semibold mb-4">Students List</h3>
+    <!-- Students List Container -->
+    <div class="content-container">
+        <div class="table-container">
+            <h3>Students List</h3>
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                <table>
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Course</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Year</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Block</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Course</th>
+                            <th>Year</th>
+                            <th>Block</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                    <tbody>
                         {#each students as student}
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            <tr>
+                                <td>
                                     {#if editingStudent?.id === student.id}
-                                        <div class="flex gap-2">
+                                        <div class="edit-field name-fields">
                                             <input
                                                 type="text"
                                                 bind:value={editingStudent.firstName}
-                                                class="input-sm w-1/2"
+                                                class="edit-form"
                                                 placeholder="First Name"
                                             />
                                             <input
                                                 type="text"
                                                 bind:value={editingStudent.lastName}
-                                                class="input-sm w-1/2"
+                                                class="edit-form"
                                                 placeholder="Last Name"
                                             />
                                         </div>
@@ -314,31 +317,31 @@
                                         {student.firstName} {student.lastName}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingStudent?.id === student.id}
                                         <input
                                             type="email"
                                             bind:value={editingStudent.email}
-                                            class="input-sm"
+                                            class="edit-form"
                                         />
                                     {:else}
                                         {student.email}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingStudent?.id === student.id}
                                         <input
                                             type="text"
                                             bind:value={editingStudent.course}
-                                            class="input-sm"
+                                            class="edit-form"
                                         />
                                     {:else}
                                         {student.course}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingStudent?.id === student.id}
-                                        <select bind:value={editingStudent.year} class="input-sm">
+                                        <select bind:value={editingStudent.year} class="edit-form">
                                             <option value="1st">1st Year</option>
                                             <option value="2nd">2nd Year</option>
                                             <option value="3rd">3rd Year</option>
@@ -348,41 +351,41 @@
                                         {student.year}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingStudent?.id === student.id}
                                         <input
                                             type="text"
                                             bind:value={editingStudent.block}
-                                            class="input-sm"
+                                            class="edit-form"
                                         />
                                     {:else}
                                         {student.block}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td>
                                     {#if editingStudent?.id === student.id}
                                         <button
                                             on:click={updateStudent}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            class="status-button status-active"
                                         >
                                             Save
                                         </button>
                                         <button
                                             on:click={() => editingStudent = null}
-                                            class="text-gray-600 hover:text-gray-900"
+                                            class="status-button status-inactive"
                                         >
                                             Cancel
                                         </button>
                                     {:else}
                                         <button
                                             on:click={() => startEdit(student)}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            class="status-button status-pending"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             on:click={() => deleteStudent(student.id)}
-                                            class="text-red-600 hover:text-red-900"
+                                            class="status-button status-inactive"
                                         >
                                             Delete
                                         </button>
@@ -411,5 +414,15 @@
         outline: none;
         border-color: rgb(99 102 241);
         box-shadow: 0 0 0 1px rgb(99 102 241);
+    }
+    .edit-field {
+        padding: 0.25rem;
+    }
+    .name-fields {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .name-fields .edit-form {
+        width: 50%;
     }
 </style>

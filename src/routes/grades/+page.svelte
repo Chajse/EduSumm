@@ -196,24 +196,25 @@
 <Navbar />
 
 <!-- Grade Form Content -->
-<div class="grade-container px-4">
-    <div class="grades-content relative max-w-4xl mx-auto mt-16 px-8 pt-12 pb-8 bg-white dark:bg-gray-900 shadow-xl rounded-xl">
-        <h2 class="record-grades-title">
-            Record Grades
-        </h2>
-        
+<div class="page-container">
+    <!-- Add Grade Form Container -->
+    <div class="content-container">
+        <h2 class="page-title">Record Grades</h2>
+
+        <!-- Success Message Popup -->
         {#if successMessage}
             <div class="success-popup">
                 {successMessage}
             </div>
         {/if}
 
+        <!-- Error Message Popup -->
         {#if errorMessage}
             <div class="error-popup">
                 {errorMessage}
             </div>
         {/if}
-        
+
         <form on:submit|preventDefault={submitGrade} class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="title-label {showError ? 'error' : ''}">Student ID</label>
@@ -261,7 +262,7 @@
                     <option value="">Select Semester</option>
                     <option value="1">First Semester</option>
                     <option value="2">Second Semester</option>
-                    <option value="3">Summer</option>
+                    <option value="3">Mid Year</option>
                 </select>
             </div>
             <div>
@@ -275,131 +276,150 @@
                     max="2100"
                 />
             </div>
-            <div class="md:col-span-2 submit-btn-container">
+            <div class="md:col-span-2 form-submit-container">
                 <button
                     type="submit"
-                    class="submit-grade-btn"
+                    class="submit-button"
                 >
                     Submit Grade
                 </button>
             </div>
         </form>
+    </div>
 
-        <!-- Grades Table -->
-        <div class="mt-8">
-            <h3 class="text-xl font-semibold mb-4">Grades History</h3>
+    <!-- Grades List Container -->
+    <div class="content-container">
+        <div class="table-container">
+            <h3>Grades History</h3>
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                <table>
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Student ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Midterm</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Final</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Semester</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Year</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            <th>Student ID</th>
+                            <th>Subject ID</th>
+                            <th>Midterm</th>
+                            <th>Final</th>
+                            <th>Semester</th>
+                            <th>Year</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                    <tbody>
                         {#each grades as grade}
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            <tr>
+                                <td>
                                     {#if editingGrade?.id === grade.id}
-                                        <input
-                                            type="text"
-                                            bind:value={editingGrade.studentId}
-                                            class="input-sm"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="text"
+                                                bind:value={editingGrade.studentId}
+                                                class="edit-form"
+                                                placeholder="Student ID"
+                                            />
+                                        </div>
                                     {:else}
                                         {grade.studentId}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingGrade?.id === grade.id}
-                                        <input
-                                            type="text"
-                                            bind:value={editingGrade.subjectId}
-                                            class="input-sm"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="text"
+                                                bind:value={editingGrade.subjectId}
+                                                class="edit-form"
+                                                placeholder="Subject ID"
+                                            />
+                                        </div>
                                     {:else}
                                         {grade.subjectId}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingGrade?.id === grade.id}
-                                        <input
-                                            type="number"
-                                            bind:value={editingGrade.midtermGrade}
-                                            class="input-sm"
-                                            min="0"
-                                            max="100"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="number"
+                                                bind:value={editingGrade.midtermGrade}
+                                                class="edit-form"
+                                                min="0"
+                                                max="100"
+                                                placeholder="Midterm Grade"
+                                            />
+                                        </div>
                                     {:else}
                                         {grade.midtermGrade}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingGrade?.id === grade.id}
-                                        <input
-                                            type="number"
-                                            bind:value={editingGrade.finalGrade}
-                                            class="input-sm"
-                                            min="0"
-                                            max="100"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="number"
+                                                bind:value={editingGrade.finalGrade}
+                                                class="edit-form"
+                                                min="0"
+                                                max="100"
+                                                placeholder="Final Grade"
+                                            />
+                                        </div>
                                     {:else}
                                         {grade.finalGrade}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingGrade?.id === grade.id}
-                                        <select bind:value={editingGrade.semester} class="input-sm">
-                                            <option value="1">First Semester</option>
-                                            <option value="2">Second Semester</option>
-                                            <option value="3">Summer</option>
-                                        </select>
+                                        <div class="edit-field">
+                                            <select bind:value={editingGrade.semester} class="edit-form">
+                                                <option value="1">First Semester</option>
+                                                <option value="2">Second Semester</option>
+                                                <option value="3">Mid Year</option>
+                                            </select>
+                                        </div>
                                     {:else}
                                         {grade.semester}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                <td>
                                     {#if editingGrade?.id === grade.id}
-                                        <input
-                                            type="number"
-                                            bind:value={editingGrade.year}
-                                            class="input-sm"
-                                            min="2000"
-                                            max="2100"
-                                        />
+                                        <div class="edit-field">
+                                            <input
+                                                type="number"
+                                                bind:value={editingGrade.year}
+                                                class="edit-form"
+                                                min="2000"
+                                                max="2100"
+                                                placeholder="Year"
+                                            />
+                                        </div>
                                     {:else}
                                         {grade.year}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td>
                                     {#if editingGrade?.id === grade.id}
                                         <button
                                             on:click={updateGrade}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            class="status-button status-active"
                                         >
                                             Save
                                         </button>
                                         <button
                                             on:click={() => editingGrade = null}
-                                            class="text-gray-600 hover:text-gray-900"
+                                            class="status-button status-inactive"
                                         >
                                             Cancel
                                         </button>
                                     {:else}
                                         <button
                                             on:click={() => startEdit(grade)}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            class="status-button status-pending"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             on:click={() => deleteGrade(grade.id)}
-                                            class="text-red-600 hover:text-red-900"
+                                            class="status-button status-inactive"
                                         >
                                             Delete
                                         </button>
@@ -428,5 +448,8 @@
         outline: none;
         border-color: rgb(99 102 241);
         box-shadow: 0 0 0 1px rgb(99 102 241);
+    }
+    .edit-field {
+        padding: 0.25rem;
     }
 </style>

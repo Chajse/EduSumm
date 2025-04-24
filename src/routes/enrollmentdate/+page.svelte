@@ -181,10 +181,9 @@
 
 <!-- Enrollment Form Content -->
 <div class="page-container">
+    <!-- Add Enrollment Form Container -->
     <div class="content-container">
-        <h2 class="page-title">
-            Record Enrollment
-        </h2>
+        <h2 class="page-title">Record Enrollment</h2>
 
         <!-- Success Message Popup -->
         {#if successMessage}
@@ -195,8 +194,10 @@
 
         <!-- Error Message Popup -->
         {#if errorMessage}
-            <div class="error-popup">
-                {errorMessage}
+            <div class="error-popup center-popup">
+                <div class="popup-content">
+                    {errorMessage}
+                </div>
             </div>
         {/if}
 
@@ -207,58 +208,47 @@
                     type="text"
                     bind:value={enrollment.studentId}
                     class="input {showError ? 'form-error' : ''}"
-                    placeholder="Enter Student ID"
+                    placeholder="2024001"
                 />
             </div>
-
             <div>
                 <label class="title-label {showError ? 'error' : ''}">Subject ID</label>
                 <input
                     type="text"
                     bind:value={enrollment.subjectId}
                     class="input {showError ? 'form-error' : ''}"
-                    placeholder="Enter Subject ID"
+                    placeholder="SUB001"
                 />
             </div>
-
             <div>
                 <label class="title-label {showError ? 'error' : ''}">Semester</label>
-                <select 
-                    bind:value={enrollment.semester} 
-                    class="input {showError ? 'form-error' : ''}"
-                >
+                <select bind:value={enrollment.semester} class="input {showError ? 'form-error' : ''}">
                     <option value="">Select Semester</option>
-                    <option value="1st">1st Semester</option>
-                    <option value="2nd">2nd Semester</option>
-                    <option value="Summer">Summer</option>
+                    <option value="1">First Semester</option>
+                    <option value="2">Second Semester</option>
+                    <option value="3">Mid Year</option>
                 </select>
             </div>
-
             <div>
                 <label class="title-label {showError ? 'error' : ''}">Year</label>
                 <input
                     type="number"
                     bind:value={enrollment.year}
                     class="input {showError ? 'form-error' : ''}"
-                    placeholder="e.g. 2025"
+                    placeholder="2024"
                     min="2000"
                     max="2100"
                 />
             </div>
-
-            <div class="md:col-span-2">
+            <div>
                 <label class="title-label {showError ? 'error' : ''}">Status</label>
-                <select 
-                    bind:value={enrollment.status} 
-                    class="input {showError ? 'form-error' : ''}"
-                >
+                <select bind:value={enrollment.status} class="input {showError ? 'form-error' : ''}">
                     <option value="">Select Status</option>
                     <option value="Enrolled">Enrolled</option>
                     <option value="Dropped">Dropped</option>
                     <option value="Completed">Completed</option>
                 </select>
             </div>
-
             <div class="md:col-span-2 form-submit-container">
                 <button
                     type="submit"
@@ -268,106 +258,121 @@
                 </button>
             </div>
         </form>
+    </div>
 
-        <!-- Enrollment History Table -->
-        <div class="mt-8">
-            <h3 class="text-xl font-semibold mb-4">Enrollment History</h3>
+    <!-- Enrollment List Container -->
+    <div class="content-container">
+        <div class="table-container">
+            <h3>Enrollment History</h3>
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                <table>
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Student ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Semester</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Year</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            <th>Student ID</th>
+                            <th>Subject ID</th>
+                            <th>Semester</th>
+                            <th>Year</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                        {#each enrollments as enroll}
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    {#if editingEnrollment?.id === enroll.id}
-                                        <input
-                                            type="text"
-                                            bind:value={editingEnrollment.studentId}
-                                            class="input-sm"
-                                        />
+                    <tbody>
+                        {#each enrollments as enrollment}
+                            <tr>
+                                <td>
+                                    {#if editingEnrollment?.id === enrollment.id}
+                                        <div class="edit-field">
+                                            <input
+                                                type="text"
+                                                bind:value={editingEnrollment.studentId}
+                                                class="edit-form"
+                                                placeholder="Student ID"
+                                            />
+                                        </div>
                                     {:else}
-                                        {enroll.studentId}
+                                        {enrollment.studentId}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    {#if editingEnrollment?.id === enroll.id}
-                                        <input
-                                            type="text"
-                                            bind:value={editingEnrollment.subjectId}
-                                            class="input-sm"
-                                        />
+                                <td>
+                                    {#if editingEnrollment?.id === enrollment.id}
+                                        <div class="edit-field">
+                                            <input
+                                                type="text"
+                                                bind:value={editingEnrollment.subjectId}
+                                                class="edit-form"
+                                                placeholder="Subject ID"
+                                            />
+                                        </div>
                                     {:else}
-                                        {enroll.subjectId}
+                                        {enrollment.subjectId}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    {#if editingEnrollment?.id === enroll.id}
-                                        <select bind:value={editingEnrollment.semester} class="input-sm">
-                                            <option value="1st">1st Semester</option>
-                                            <option value="2nd">2nd Semester</option>
-                                            <option value="Summer">Summer</option>
-                                        </select>
+                                <td>
+                                    {#if editingEnrollment?.id === enrollment.id}
+                                        <div class="edit-field">
+                                            <select bind:value={editingEnrollment.semester} class="edit-form">
+                                                <option value="1">First Semester</option>
+                                                <option value="2">Second Semester</option>
+                                                <option value="3">Mid Year</option>
+                                            </select>
+                                        </div>
                                     {:else}
-                                        {enroll.semester}
+                                        {enrollment.semester}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    {#if editingEnrollment?.id === enroll.id}
-                                        <input
-                                            type="number"
-                                            bind:value={editingEnrollment.year}
-                                            class="input-sm"
-                                            min="2000"
-                                            max="2100"
-                                        />
+                                <td>
+                                    {#if editingEnrollment?.id === enrollment.id}
+                                        <div class="edit-field">
+                                            <input
+                                                type="number"
+                                                bind:value={editingEnrollment.year}
+                                                class="edit-form"
+                                                min="2000"
+                                                max="2100"
+                                                placeholder="Year"
+                                            />
+                                        </div>
                                     {:else}
-                                        {enroll.year}
+                                        {enrollment.year}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    {#if editingEnrollment?.id === enroll.id}
-                                        <select bind:value={editingEnrollment.status} class="input-sm">
-                                            <option value="Enrolled">Enrolled</option>
-                                            <option value="Dropped">Dropped</option>
-                                            <option value="Completed">Completed</option>
-                                        </select>
+                                <td>
+                                    {#if editingEnrollment?.id === enrollment.id}
+                                        <div class="edit-field">
+                                            <select bind:value={editingEnrollment.status} class="edit-form">
+                                                <option value="Enrolled">Enrolled</option>
+                                                <option value="Dropped">Dropped</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
                                     {:else}
-                                        {enroll.status}
+                                        {enrollment.status}
                                     {/if}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    {#if editingEnrollment?.id === enroll.id}
+                                <td>
+                                    {#if editingEnrollment?.id === enrollment.id}
                                         <button
                                             on:click={updateEnrollment}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            class="status-button status-active"
                                         >
                                             Save
                                         </button>
                                         <button
                                             on:click={() => editingEnrollment = null}
-                                            class="text-gray-600 hover:text-gray-900"
+                                            class="status-button status-inactive"
                                         >
                                             Cancel
                                         </button>
                                     {:else}
                                         <button
-                                            on:click={() => startEdit(enroll)}
-                                            class="text-indigo-600 hover:text-indigo-900 mr-2"
+                                            on:click={() => startEdit(enrollment)}
+                                            class="status-button status-pending"
                                         >
                                             Edit
                                         </button>
                                         <button
-                                            on:click={() => deleteEnrollment(enroll.id)}
-                                            class="text-red-600 hover:text-red-900"
+                                            on:click={() => deleteEnrollment(enrollment.id)}
+                                            class="status-button status-inactive"
                                         >
                                             Delete
                                         </button>
@@ -396,5 +401,26 @@
         outline: none;
         border-color: rgb(99 102 241);
         box-shadow: 0 0 0 1px rgb(99 102 241);
+    }
+    .edit-field {
+        padding: 0.25rem;
+    }
+    .center-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 90%;
+    }
+    .popup-content {
+        text-align: center;
+        color: #ef4444;
+        font-weight: 500;
     }
 </style>
