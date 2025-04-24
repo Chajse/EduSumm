@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { students } from '$lib/server/db/schema';
+import { students, grades, enrollmentHistory } from '$lib/server/db/schema';
 import { json } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm'; // Import the eq function
 
@@ -73,18 +73,31 @@ export const DELETE: RequestHandler = async ({ request }) => {
             return json({ error: 'Missing student ID' }, { status: 400 });
         }
 
-        // Perform the delete operation
-        const deletedStudent = await db
-            .delete(students)
-            .where(eq(students.id, id));
+        // Start a transaction to ensure all operations succeed or fail together
+        await db.transaction(async (tx) => {
+            // Delete related grades first
+            await tx.delete(grades)
+                .where(eq(grades.studentId, id));
 
-        // The `deletedStudent` will be an empty result if no rows matched
-        if (!deletedStudent) {
-            return json({ error: 'Student not found' }, { status: 404 });
-        }
+            // Delete related enrollment history
+            await tx.delete(enrollmentHistory)
+                .where(eq(enrollmentHistory.studentId, id));
 
-        return json({ success: true, message: 'Student deleted successfully' });
+            // Finally, delete the student
+            const result = await tx.delete(students)
+                .where(eq(students.id, id));
+
+            if (!result) {
+                throw new Error('Student not found');
+            }
+        });
+
+        return json({ success: true, message: 'Student and related records deleted successfully' });
     } catch (error) {
-        return json({ error: 'Failed to delete student' }, { status: 500 });
+        console.error('Error deleting student:', error);
+        return json({ 
+            error: 'Failed to delete student and related records',
+            details: error instanceof Error ? error.message : 'Unknown error'
+        }, { status: 500 });
     }
 };
