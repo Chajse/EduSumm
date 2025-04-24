@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { grades } from '$lib/server/db/schema';
+import { grades, students, subjects } from '$lib/server/db/schema';
 import { json } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm'; 
 
@@ -7,8 +7,30 @@ import type { RequestHandler } from '../grades/$types';
 
 // GET: Fetch all grades
 export const GET: RequestHandler = async () => {
-    const data = await db.select().from(grades);
-    return json({ data: data });
+    const data = await db
+        .select({
+            id: grades.id,
+            studentId: grades.studentId,
+            subjectId: grades.subjectId,
+            firstName: students.firstName,
+            lastName: students.lastName,
+            subjectCode: subjects.subjectCode,
+            midtermGrade: grades.midtermGrade,
+            finalGrade: grades.finalGrade,
+            semester: grades.semester,
+            year: grades.year
+        })
+        .from(grades)
+        .leftJoin(students, eq(grades.studentId, students.id))
+        .leftJoin(subjects, eq(grades.subjectId, subjects.id));
+
+    // Transform the data to include the full name
+    const transformedData = data.map(grade => ({
+        ...grade,
+        studentName: `${grade.firstName} ${grade.lastName}`,
+    }));
+
+    return json({ data: transformedData });
 };
 
 // POST: Add a new grade entry

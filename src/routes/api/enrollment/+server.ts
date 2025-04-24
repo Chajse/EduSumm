@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { enrollmentHistory } from '$lib/server/db/schema';
+import { enrollmentHistory, students, subjects } from '$lib/server/db/schema';
 import { json } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm'; // Import the eq function
 
@@ -7,8 +7,29 @@ import type { RequestHandler } from '../enrollment/$types';
 
 // GET: Fetch all enrollment histories
 export const GET: RequestHandler = async () => {
-    const data = await db.select().from(enrollmentHistory);
-    return json({ data: data });
+    const data = await db
+        .select({
+            id: enrollmentHistory.id,
+            studentId: enrollmentHistory.studentId,
+            subjectId: enrollmentHistory.subjectId,
+            firstName: students.firstName,
+            lastName: students.lastName,
+            subjectCode: subjects.subjectCode,
+            semester: enrollmentHistory.semester,
+            year: enrollmentHistory.year,
+            status: enrollmentHistory.status
+        })
+        .from(enrollmentHistory)
+        .leftJoin(students, eq(enrollmentHistory.studentId, students.id))
+        .leftJoin(subjects, eq(enrollmentHistory.subjectId, subjects.id));
+
+    // Transform the data to include the full name
+    const transformedData = data.map(enrollment => ({
+        ...enrollment,
+        studentName: `${enrollment.firstName} ${enrollment.lastName}`,
+    }));
+
+    return json({ data: transformedData });
 };
 
 // POST: Add a new enrollment entry

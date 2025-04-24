@@ -11,14 +11,50 @@
     };
 
     let enrollments: any[] = [];
+    let students: any[] = [];
+    let subjects: any[] = [];
     let editingEnrollment: any = null;
     let successMessage = '';
     let errorMessage = '';
     let showError = false;
 
+    // Function to convert semester number to text
+    function getSemesterText(semester: string | number): string {
+        const semesterMap: { [key: string]: string } = {
+            '1': 'First Semester',
+            '2': 'Second Semester',
+            '3': 'Mid Year'
+        };
+        return semesterMap[semester?.toString()] || 'Unknown Semester';
+    }
+
     onMount(async () => {
-        await fetchEnrollments();
+        await Promise.all([
+            fetchEnrollments(),
+            fetchStudents(),
+            fetchSubjects()
+        ]);
     });
+
+    async function fetchStudents() {
+        try {
+            const response = await fetch('/api/students');
+            const result = await response.json();
+            students = result.data;
+        } catch (error) {
+            console.error('Error fetching students:', error);
+        }
+    }
+
+    async function fetchSubjects() {
+        try {
+            const response = await fetch('/api/subjects');
+            const result = await response.json();
+            subjects = result.data;
+        } catch (error) {
+            console.error('Error fetching subjects:', error);
+        }
+    }
 
     async function fetchEnrollments() {
         try {
@@ -203,22 +239,32 @@
 
         <form on:submit|preventDefault={submitEnrollment} class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="title-label {showError ? 'error' : ''}">Student ID</label>
-                <input
-                    type="text"
+                <label class="title-label {showError ? 'error' : ''}">Student</label>
+                <select
                     bind:value={enrollment.studentId}
                     class="input {showError ? 'form-error' : ''}"
-                    placeholder="2024001"
-                />
+                >
+                    <option value="">Select Student</option>
+                    {#each students as student}
+                        <option value={student.id}>
+                            {student.firstName} {student.lastName}
+                        </option>
+                    {/each}
+                </select>
             </div>
             <div>
-                <label class="title-label {showError ? 'error' : ''}">Subject ID</label>
-                <input
-                    type="text"
+                <label class="title-label {showError ? 'error' : ''}">Subject</label>
+                <select
                     bind:value={enrollment.subjectId}
                     class="input {showError ? 'form-error' : ''}"
-                    placeholder="SUB001"
-                />
+                >
+                    <option value="">Select Subject</option>
+                    {#each subjects as subject}
+                        <option value={subject.id}>
+                            {subject.subjectCode} - {subject.subjectName}
+                        </option>
+                    {/each}
+                </select>
             </div>
             <div>
                 <label class="title-label {showError ? 'error' : ''}">Semester</label>
@@ -268,8 +314,8 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Student ID</th>
-                            <th>Subject ID</th>
+                            <th>Student Name</th>
+                            <th>Subject Code</th>
                             <th>Semester</th>
                             <th>Year</th>
                             <th>Status</th>
@@ -282,29 +328,37 @@
                                 <td>
                                     {#if editingEnrollment?.id === enrollment.id}
                                         <div class="edit-field">
-                                            <input
-                                                type="text"
+                                            <select
                                                 bind:value={editingEnrollment.studentId}
                                                 class="edit-form"
-                                                placeholder="Student ID"
-                                            />
+                                            >
+                                                {#each students as student}
+                                                    <option value={student.id}>
+                                                        {student.firstName} {student.lastName}
+                                                    </option>
+                                                {/each}
+                                            </select>
                                         </div>
                                     {:else}
-                                        {enrollment.studentId}
+                                        {enrollment.studentName || 'Unknown Student'}
                                     {/if}
                                 </td>
                                 <td>
                                     {#if editingEnrollment?.id === enrollment.id}
                                         <div class="edit-field">
-                                            <input
-                                                type="text"
+                                            <select
                                                 bind:value={editingEnrollment.subjectId}
                                                 class="edit-form"
-                                                placeholder="Subject ID"
-                                            />
+                                            >
+                                                {#each subjects as subject}
+                                                    <option value={subject.id}>
+                                                        {subject.subjectCode} - {subject.subjectName}
+                                                    </option>
+                                                {/each}
+                                            </select>
                                         </div>
                                     {:else}
-                                        {enrollment.subjectId}
+                                        {enrollment.subjectCode || 'Unknown Subject'}
                                     {/if}
                                 </td>
                                 <td>
@@ -317,7 +371,7 @@
                                             </select>
                                         </div>
                                     {:else}
-                                        {enrollment.semester}
+                                        {getSemesterText(enrollment.semester)}
                                     {/if}
                                 </td>
                                 <td>
@@ -404,6 +458,12 @@
     }
     .edit-field {
         padding: 0.25rem;
+    }
+    .text-gray-500 {
+        color: #6b7280;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: block;
     }
     .center-popup {
         position: fixed;
